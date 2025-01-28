@@ -62,14 +62,13 @@
     "tsup": "^8.3.5",
     "typescript": "^5.7.3"
   },
-  "author": "Steven Tey <stevensteel97@gmail.com>",
-  "homepage": "https://novel.sh",
+  "author": "virtuarian <virtuarian@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/steven-tey/novel.git"
+    "url": "git+https://github.com/virtuarian/novel-plus.git"
   },
   "bugs": {
-    "url": "https://github.com/steven-tey/novel/issues"
+    "url": "https://github.com/virtuarian/novel-plus/issues"
   },
   "keywords": [
     "ai",

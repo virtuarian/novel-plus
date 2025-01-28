@@ -1,29 +1,9 @@
+//apps/web/components/tailwind/generative/ai-selector-commands.tsx
 import { ArrowDownWideNarrow, CheckCheck, RefreshCcwDot, StepForward, WrapText } from "lucide-react";
 import { getPrevText, useEditor } from "novel";
 import { CommandGroup, CommandItem, CommandSeparator } from "../ui/command";
-
-const options = [
-  {
-    value: "improve",
-    label: "Improve writing",
-    icon: RefreshCcwDot,
-  },
-  {
-    value: "fix",
-    label: "Fix grammar",
-    icon: CheckCheck,
-  },
-  {
-    value: "shorter",
-    label: "Make shorter",
-    icon: ArrowDownWideNarrow,
-  },
-  {
-    value: "longer",
-    label: "Make longer",
-    icon: WrapText,
-  },
-];
+import { getLabels } from "@/lib/labels";
+import { useEffect, useState } from "react";
 
 interface AISelectorCommandsProps {
   onSelect: (value: string, option: string) => void;
@@ -31,11 +11,17 @@ interface AISelectorCommandsProps {
 
 const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
   const { editor } = useEditor();
+  const [labels, setLabels] = useState(getLabels(process.env.NEXT_PUBLIC_AI_LANGUAGE));
+
+  // 環境変数が変更された場合にラベルを更新
+  useEffect(() => {
+    setLabels(getLabels(process.env.NEXT_PUBLIC_AI_LANGUAGE));
+  }, [process.env.NEXT_PUBLIC_AI_LANGUAGE]);
 
   return (
     <>
-      <CommandGroup heading="Edit or review selection">
-        {options.map((option) => (
+      <CommandGroup heading={labels.editHeading}>
+        {labels.options.map((option) => (
           <CommandItem
             onSelect={(value) => {
               const slice = editor.state.selection.content();
@@ -52,7 +38,7 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
         ))}
       </CommandGroup>
       <CommandSeparator />
-      <CommandGroup heading="Use AI to do more">
+      <CommandGroup heading={labels.moreHeading}>
         <CommandItem
           onSelect={() => {
             const pos = editor.state.selection.from;
@@ -63,7 +49,7 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
           className="gap-2 px-4"
         >
           <StepForward className="h-4 w-4 text-purple-500" />
-          Continue writing
+          {labels.continueLabel}
         </CommandItem>
       </CommandGroup>
     </>

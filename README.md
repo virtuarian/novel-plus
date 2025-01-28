@@ -29,7 +29,6 @@ https://novel.sh/docs/introduction
 
 [Novel-plus](https://github.com/virtuarian/novel-plus) is a customized version of Novel, a Notion-style WYSIWYG editor with AI-powered autocompletions.
 
-https://github.com/steven-tey/novel/assets/28986134/2099877f-4f2b-4b1c-8782-5d803d63be5c
 
 <br />
 
@@ -55,18 +54,6 @@ pnpm i
 pnpm dev
 ```
 
-## Cross-framework support
-
-While Novel is built for React, we also have a few community-maintained packages for non-React frameworks:
-
-- Svelte: https://novel.sh/svelte
-- Vue: https://novel.sh/vue
-
-## VSCode Extension
-
-Thanks to @bennykok, Novel also has a VSCode Extension: https://novel.sh/vscode
-
-https://github.com/steven-tey/novel/assets/28986134/58ebf7e3-cdb3-43df-878b-119e304f7373
 
 ## Tech Stack
 

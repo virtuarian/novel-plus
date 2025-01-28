@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: "/github",
-        destination: "https://github.com/steven-tey/novel",
+        destination: "https://github.com/virtuarian/novel-plus",
         permanent: true,
       },
       {
@@ -35,7 +35,7 @@ const nextConfig = {
       },
       {
         source: "/feedback",
-        destination: "https://github.com/steven-tey/novel/issues",
+        destination: "https://github.com/virtuarian/novel-plus/issues",
         permanent: true,
       },
       {

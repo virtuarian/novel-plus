@@ -1,129 +1,153 @@
-import { openai } from "@ai-sdk/openai";
-import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
-import { streamText } from "ai";
+// apps/web/app/api/generate/route.ts
 import { match } from "ts-pattern";
+import {
+  callDeepSeek,
+  callGeminiStream,
+  callOpenAIStream,
+  callAzureOpenAIStream,
+} from "@/lib/llm";
+import { getPrompts } from "@/lib/prompts";
 
-// IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
 export const runtime = "edge";
 
 export async function POST(req: Request): Promise<Response> {
-  // Check if the OPENAI_API_KEY is set, if not return 400
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
-    return new Response("Missing OPENAI_API_KEY - make sure to add it to your .env file.", {
-      status: 400,
-    });
-  }
-  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-    const ip = req.headers.get("x-forwarded-for");
-    const ratelimit = new Ratelimit({
-      redis: kv,
-      limiter: Ratelimit.slidingWindow(50, "1 d"),
-    });
+  try {
+    const { prompt, option, command } = await req.json();
+    const prompts = getPrompts(process.env.AI_LANGUAGE);
 
-    const { success, limit, reset, remaining } = await ratelimit.limit(`novel_ratelimit_${ip}`);
-
-    if (!success) {
-      return new Response("You have reached your request limit for the day.", {
-        status: 429,
-        headers: {
-          "X-RateLimit-Limit": limit.toString(),
-          "X-RateLimit-Remaining": remaining.toString(),
-          "X-RateLimit-Reset": reset.toString(),
+    const messages = match(option)
+      .with("continue", () => [
+        {
+          role: "system",
+          content: prompts.continue.system,
         },
-      });
+        {
+          role: "user",
+          content: prompts.continue.user(prompt),
+        },
+      ])
+      .with("improve", () => [
+        {
+          role: "system",
+          content: prompts.improve.system,
+        },
+        {
+          role: "user",
+          content: prompts.improve.user(prompt),
+        },
+      ])
+      .with("shorter", () => [
+        {
+          role: "system",
+          content: prompts.shorter.system,
+        },
+        {
+          role: "user",
+          content: prompts.shorter.user(prompt),
+        },
+      ])
+      .with("longer", () => [
+        {
+          role: "system",
+          content: prompts.longer.system,
+        },
+        {
+          role: "user",
+          content: prompts.longer.user(prompt),
+        },
+      ])
+      .with("fix", () => [
+        {
+          role: "system",
+          content: prompts.fix.system,
+        },
+        {
+          role: "user",
+          content: prompts.fix.user(prompt),
+        },
+      ])
+      .with("zap", () => [
+        {
+          role: "system",
+          content: prompts.zap.system,
+        },
+        {
+          role: "user",
+          content: prompts.zap.user(prompt, command || ''),
+        },
+      ])
+      .run();
+
+    // 共通のパラメータ設定
+    const commonParams = {
+      temperature: 0.7,
+      maxTokens: 1000,
+      message: messages[messages.length - 1].content,
+    };
+
+    // プロバイダー別の処理
+    try {
+      switch (process.env.API_PROVIDER?.toLowerCase()) {
+        case "openai":
+          return await callOpenAIStream({
+            ...commonParams,
+            apiKey: process.env.OPENAI_API_KEY,
+            model: process.env.OPENAI_MODEL || "gpt-4",
+            endpoint: undefined,
+          });
+
+        case "azure":
+          return await callAzureOpenAIStream({
+            ...commonParams,
+            apiKey: process.env.AZURE_OPENAI_API_KEY,
+            endpoint: process.env.AZURE_OPENAI_ENDPOINT,
+            model: process.env.AZURE_OPENAI_DEPLOYMENT,
+          });
+
+        case "gemini":
+          return await callGeminiStream({
+            ...commonParams,
+            apiKey: process.env.GEMINI_API_KEY,
+            model: process.env.GEMINI_MODEL || "gemini-pro",
+            endpoint: undefined,
+          });
+
+        case "deepseek":
+          return await callDeepSeek({
+            ...commonParams,
+            apiKey: process.env.DEEPSEEK_API_KEY,
+            model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
+            message: messages, // DeepSeekは完全なメッセージ配列を必要とする
+            endpoint: process.env.DEEPSEEK_ENDPOINT,
+          });
+
+        default:
+          throw new Error(`Unsupported AI provider: ${process.env.API_PROVIDER}`);
+      }
+    } catch (error) {
+
+      return new Response(
+        JSON.stringify({
+          error: error.message,
+          provider: error.provider,
+          status: error.status
+        }), {
+        status: error.status || 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+      );
     }
+
+  } catch (error) {
+    console.error('Generate API error:', error);
+    return new Response(
+      JSON.stringify({
+        error: 'Internal Server Error',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    }
+    );
   }
-
-  const { prompt, option, command } = await req.json();
-  const messages = match(option)
-    .with("continue", () => [
-      {
-        role: "system",
-        content:
-          "You are an AI writing assistant that continues existing text based on context from prior text. " +
-          "Give more weight/priority to the later characters than the beginning ones. " +
-          "Limit your response to no more than 200 characters, but make sure to construct complete sentences." +
-          "Use Markdown formatting when appropriate.",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ])
-    .with("improve", () => [
-      {
-        role: "system",
-        content:
-          "You are an AI writing assistant that improves existing text. " +
-          "Limit your response to no more than 200 characters, but make sure to construct complete sentences." +
-          "Use Markdown formatting when appropriate.",
-      },
-      {
-        role: "user",
-        content: `The existing text is: ${prompt}`,
-      },
-    ])
-    .with("shorter", () => [
-      {
-        role: "system",
-        content:
-          "You are an AI writing assistant that shortens existing text. " + "Use Markdown formatting when appropriate.",
-      },
-      {
-        role: "user",
-        content: `The existing text is: ${prompt}`,
-      },
-    ])
-    .with("longer", () => [
-      {
-        role: "system",
-        content:
-          "You are an AI writing assistant that lengthens existing text. " +
-          "Use Markdown formatting when appropriate.",
-      },
-      {
-        role: "user",
-        content: `The existing text is: ${prompt}`,
-      },
-    ])
-    .with("fix", () => [
-      {
-        role: "system",
-        content:
-          "You are an AI writing assistant that fixes grammar and spelling errors in existing text. " +
-          "Limit your response to no more than 200 characters, but make sure to construct complete sentences." +
-          "Use Markdown formatting when appropriate.",
-      },
-      {
-        role: "user",
-        content: `The existing text is: ${prompt}`,
-      },
-    ])
-    .with("zap", () => [
-      {
-        role: "system",
-        content:
-          "You area an AI writing assistant that generates text based on a prompt. " +
-          "You take an input from the user and a command for manipulating the text" +
-          "Use Markdown formatting when appropriate.",
-      },
-      {
-        role: "user",
-        content: `For this text: ${prompt}. You have to respect the command: ${command}`,
-      },
-    ])
-    .run();
-
-  const result = await streamText({
-    prompt: messages[messages.length - 1].content,
-    maxTokens: 4096,
-    temperature: 0.7,
-    topP: 1,
-    frequencyPenalty: 0,
-    presencePenalty: 0,
-    model: openai("gpt-4o-mini"),
-  });
-
-  return result.toDataStreamResponse();
 }

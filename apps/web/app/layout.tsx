@@ -1,3 +1,4 @@
+// apps/web/app/layout.tsx
 import "@/styles/globals.css";
 import "@/styles/prosemirror.css";
 import 'katex/dist/katex.min.css';
@@ -10,29 +11,13 @@ const title = "Novel - Notion-style WYSIWYG editor with AI-powered autocompletio
 const description =
   "Novel is a Notion-style WYSIWYG editor with AI-powered autocompletions. Built with Tiptap, OpenAI, and Vercel AI SDK.";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  openGraph: {
-    title,
-    description,
-  },
-  twitter: {
-    title,
-    description,
-    card: "summary_large_image",
-    creator: "@steventey",
-  },
-  metadataBase: new URL("https://novel.sh"),
-};
-
 export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ja" suppressHydrationWarning>
       <body>
         <Providers>{children}</Providers>
       </body>

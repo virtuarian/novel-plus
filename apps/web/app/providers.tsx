@@ -1,3 +1,4 @@
+// apps/web/app/providers.tsx
 "use client";
 
 import { type Dispatch, type ReactNode, type SetStateAction, createContext } from "react";
@@ -5,13 +6,14 @@ import { ThemeProvider, useTheme } from "next-themes";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { DocumentProvider } from "@/context/DocumentContext";
 
 export const AppContext = createContext<{
   font: string;
   setFont: Dispatch<SetStateAction<string>>;
 }>({
   font: "Default",
-  setFont: () => {},
+  setFont: () => { },
 });
 
 const ToasterProvider = () => {
@@ -32,9 +34,11 @@ export default function Providers({ children }: { children: ReactNode }) {
           setFont,
         }}
       >
-        <ToasterProvider />
-        {children}
-        <Analytics />
+        <DocumentProvider>
+          <ToasterProvider />
+          {children}
+          <Analytics />
+        </DocumentProvider>
       </AppContext.Provider>
     </ThemeProvider>
   );
