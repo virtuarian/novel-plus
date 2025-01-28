@@ -26,17 +26,17 @@ const DocumentContext = createContext<DocumentContextType | null>(null);
 // DocumentProviderを作成
 export function DocumentProvider({ children }: { children: ReactNode }) {
     const [documents, setDocuments] = useState<NotionDocument[]>([]);
-    const [currentDoc, setCurrentDoc] = useState<NotionDocument | null>(null);
+    // const [currentDoc, setCurrentDoc] = useState<NotionDocument | null>(null);
 
-    // const [currentDoc, setCurrentDoc] = useState<NotionDocument | null>(() => {
-    //     // 初期状態で新規ドキュメントを作成
-    //     return {
-    //         id: crypto.randomUUID(),
-    //         title: '',
-    //         content: defaultEditorContent,
-    //         updatedAt: Date.now()
-    //     };
-    // });
+    const [currentDoc, setCurrentDoc] = useState<NotionDocument | null>(() => {
+        // 初期状態で新規ドキュメントを作成
+        return {
+            id: crypto.randomUUID(),
+            title: '',
+            content: defaultEditorContent,
+            updatedAt: Date.now()
+        };
+    });
 
     // 初期ロード時にローカルストレージから読み込む
     useEffect(() => {

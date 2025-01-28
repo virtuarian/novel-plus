@@ -2,6 +2,7 @@
 "use client";
 import { defaultEditorContent } from "@/lib/content";
 import {
+  Command,
   EditorCommand,
   EditorCommandEmpty,
   EditorCommandItem,
@@ -14,6 +15,7 @@ import {
   handleCommandNavigation,
   handleImageDrop,
   handleImagePaste,
+  renderItems,
 } from "novel";
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -45,13 +47,34 @@ export const TailwindAdvancedEditor = () => {
   const [isEditorReady, setIsEditorReady] = useState(false);
   const editorRef = useRef<EditorInstance | null>(null);
 
+  // 言語設定を取得
+  const currentLanguage = process.env.NEXT_PUBLIC_AI_LANGUAGE || 'en';
+
+  const suggestionItems = useMemo(() => {
+    return createSuggestionItemsWithLanguage(
+      currentLanguage,
+      setOpenAI
+    );
+  }, [currentLanguage, setOpenAI]);
+
   // スラッシュコマンドをコンポーネント内で初期化
-  const slashCommand = useSlashCommand();
+  // const slashCommand = useSlashCommand(setOpenAI);
+  const slashCommand = useMemo(() => {
+    return Command.configure({
+      suggestion: {
+        items: () => suggestionItems,
+        render: renderItems,
+      },
+    });
+  }, [suggestionItems]);
 
   // extensionsをuseMemoで最適化
   const extensions = useMemo(() => {
     return [...defaultExtensions, slashCommand];
   }, [slashCommand]);
+
+  // この部分を確認
+  // console.log('setOpenAI function:', setOpenAI); // デバッグ用
 
   // currentDocの変更を監視
   useEffect(() => {
@@ -76,13 +99,12 @@ export const TailwindAdvancedEditor = () => {
   }, [currentDoc]);
 
 
-  // 言語設定を取得
-  const currentLanguage = process.env.NEXT_PUBLIC_AI_LANGUAGE || 'en';
+  // デバッグ用のeffect
+  // useEffect(() => {
+  //   console.log('openAI state:', openAI);
+  // }, [openAI]);
 
-  // サジェストアイテムをuseMemoで最適化
-  const suggestionItems = useMemo(() => {
-    return createSuggestionItemsWithLanguage(currentLanguage);
-  }, [currentLanguage]);
+
 
   const highlightCodeblocks = (content: string) => {
     const doc = new DOMParser().parseFromString(content, "text/html");
@@ -188,7 +210,12 @@ export const TailwindAdvancedEditor = () => {
             </EditorCommandList>
           </EditorCommand>
 
-          <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
+          <GenerativeMenuSwitch open={openAI}
+            onOpenChange={(value) => {
+              // console.log('GenerativeMenuSwitch onOpenChange called with:', value);
+              setOpenAI(value);
+            }}
+          >
             <Separator orientation="vertical" />
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />
             <Separator orientation="vertical" />

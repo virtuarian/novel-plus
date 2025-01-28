@@ -1,3 +1,4 @@
+// apps/web/components/tailwind/generative/generative-menu-switch.tsx
 import { EditorBubble, removeAIHighlight, useEditor } from "novel";
 import { Fragment, type ReactNode, useEffect } from "react";
 import { Button } from "../ui/button";
@@ -15,14 +16,17 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
   useEffect(() => {
     if (!open) removeAIHighlight(editor);
   }, [open]);
+
   return (
     <EditorBubble
       tippyOptions={{
         placement: open ? "bottom-start" : "top",
+        // appendTo: () => document.body,  // bodyに直接追加
         onHidden: () => {
           onOpenChange(false);
           editor.chain().unsetHighlight().run();
         },
+
       }}
       className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
     >
@@ -30,6 +34,7 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
       {!open && (
         <Fragment>
           <Button
+            data-ask-ai-button
             className="gap-1 rounded-none text-purple-500"
             variant="ghost"
             onClick={() => onOpenChange(true)}
