@@ -46,7 +46,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
   const hasCompletion = completion.length > 0;
 
   return (
-    <Command className="w-[350px]">
+    <Command className="w-[350px]" data-ai-selector>
       {hasCompletion && (
         <div className="flex max-h-[400px]">
           <ScrollArea>

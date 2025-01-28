@@ -18,6 +18,8 @@ import {
 import { Command, createSuggestionItems, renderItems } from "novel";
 import { uploadFn } from "./image-upload";
 import { getLabels } from "@/lib/labels";
+import { AISelector } from "./generative/ai-selector";
+import { Wand2 } from "lucide-react"; // AIアイコン用
 
 export const createSuggestionItemsWithLanguage = (language: string = 'en') => {
   const labels = getLabels(language).slashCommand;
@@ -32,6 +34,20 @@ export const createSuggestionItemsWithLanguage = (language: string = 'en') => {
     //     window.open("/feedback", "_blank");
     //   },
     // },
+    {
+      title: labels.ai.title,
+      description: labels.ai.description,
+      searchTerms: ["ai", "generate", "edit", "assistant"],
+      icon: <Wand2 size={18} />,
+      command: ({ editor, range }) => {
+        editor.chain().focus().deleteRange(range).run();
+        // AIセレクターを開く
+        const aiSelector = document.querySelector('[data-ai-selector]');
+        if (aiSelector) {
+          (aiSelector as HTMLElement).click();
+        }
+      },
+    },
     {
       title: labels.text.title,
       description: labels.text.description,

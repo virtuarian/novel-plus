@@ -43,6 +43,7 @@ interface SlashCommandItem {
     };
 }
 interface SlashCommandLabels {
+    ai: SlashCommandItem;
     feedback: SlashCommandItem;
     text: SlashCommandItem;
     todo: SlashCommandItem;
@@ -90,6 +91,10 @@ export const englishLabels: CommandLabels = {
         discard: "Discard"
     },
     slashCommand: {
+        ai: {
+            title: "Ask AI",
+            description: "Ask AI to edit or generate content...",
+        },
         feedback: {
             title: "Send Feedback",
             description: "Let us know how we can improve.",
@@ -209,6 +214,10 @@ export const japaneseLabels: CommandLabels = {
         discard: "破棄"
     },
     slashCommand: {
+        ai: {
+            title: "AIに聞く",
+            description: "AIに編集や生成を依頼...",
+        },
         feedback: {
             title: "フィードバック送信",
             description: "改善のためのご意見をお聞かせください。",
