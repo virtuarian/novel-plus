@@ -1,9 +1,26 @@
 // apps/web/app/page.tsx
+
+"use client";
+
+import { useEffect, useState } from "react";
+
 import { DocumentList } from "@/components/DocumentList";
+import LoginDialog from "@/components/LoginDialog";
 import { TailwindAdvancedEditor } from "@/components/tailwind/advanced-editor";
 import Menu from "@/components/tailwind/ui/menu";
 
 export default function Page() {
+  const [showLogin, setShowLogin] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/user")
+      .then((res) => res.json())
+      .then((data) => setUser(data.user));
+  }, []);
+
+  if (!user) return <LoginDialog />;
+
   return (
     <div className="flex min-h-screen">
       <DocumentList />
