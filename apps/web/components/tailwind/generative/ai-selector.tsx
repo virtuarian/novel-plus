@@ -115,6 +115,7 @@ export function AISelector({ open, onOpenChange, editor, buttonRef }: AISelector
               }}
               completion={completion}
               editor={editor}
+              onCommandExecuted={() => onOpenChange(false)}
             />
           ) : (
             <AISelectorCommands editor={editor} onSelect={(value, option) => complete(value, { body: { option } })} />

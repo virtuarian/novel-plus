@@ -58,6 +58,7 @@ export const DocumentList = () => {
 
     return (
         <div className="w-64 border-r border-muted p-4">
+            {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
             <button
                 onClick={handleNewDocument}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-accent hover:bg-accent/80 text-accent-foreground rounded-md w-full"
@@ -67,12 +68,14 @@ export const DocumentList = () => {
             </button>
             <div className="space-y-2">
                 {documents.map(doc => (
+                    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
                     <div
                         key={doc.id}
                         className="flex justify-between items-center p-2 hover:bg-accent rounded cursor-pointer group"
                         onClick={() => handleDocumentSelect(doc)}
                     >
                         <span className="truncate">{doc.title || '無題のドキュメント'}</span>
+                        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -99,6 +102,7 @@ export const DocumentList = () => {
                         </Dialog.Description>
 
                         <div className="mt-6 flex justify-end gap-4">
+                            {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                             <button
                                 onClick={() => {
                                     setDeleteDialogOpen(false);
@@ -108,6 +112,7 @@ export const DocumentList = () => {
                             >
                                 キャンセル
                             </button>
+                            {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                             <button
                                 onClick={handleDelete}
                                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"

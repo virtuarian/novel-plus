@@ -1,4 +1,5 @@
 import { Check, TextQuote, TrashIcon } from "lucide-react";
+
 import type { EditorInstance } from "novel";
 import { useEffect, useState } from "react";
 import { getLabels } from "../../../lib/labels";

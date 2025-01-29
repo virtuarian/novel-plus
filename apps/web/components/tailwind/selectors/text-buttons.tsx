@@ -13,30 +13,35 @@ export const TextButtons = () => {
       isActive: (editor) => editor.isActive("bold"),
       command: (editor) => editor.chain().focus().toggleBold().run(),
       icon: BoldIcon,
+      nameKey: "text"
     },
     {
       name: "italic",
       isActive: (editor) => editor.isActive("italic"),
       command: (editor) => editor.chain().focus().toggleItalic().run(),
       icon: ItalicIcon,
+      nameKey: "text"
     },
     {
       name: "underline",
       isActive: (editor) => editor.isActive("underline"),
       command: (editor) => editor.chain().focus().toggleUnderline().run(),
       icon: UnderlineIcon,
+      nameKey: "text"
     },
     {
       name: "strike",
       isActive: (editor) => editor.isActive("strike"),
       command: (editor) => editor.chain().focus().toggleStrike().run(),
       icon: StrikethroughIcon,
+      nameKey: "text"
     },
     {
       name: "code",
       isActive: (editor) => editor.isActive("code"),
       command: (editor) => editor.chain().focus().toggleCode().run(),
       icon: CodeIcon,
+      nameKey: "text"
     },
   ];
   return (

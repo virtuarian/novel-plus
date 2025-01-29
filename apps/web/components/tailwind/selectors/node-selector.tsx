@@ -22,6 +22,7 @@ import { Popover } from "@radix-ui/react-popover";
 
 export type SelectorItem = {
   nameKey: keyof CommandLabels["nodeSelector"];
+  name: string;
   icon: LucideIcon;
   command: (editor: ReturnType<typeof useEditor>["editor"]) => void;
   isActive: (editor: ReturnType<typeof useEditor>["editor"]) => boolean;

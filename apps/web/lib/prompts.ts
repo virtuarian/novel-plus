@@ -275,7 +275,7 @@ const japanesePrompts: PromptMessages = {
         user: (prompt) => `このテキストを箇条書きに変換してください: ${prompt}`,
     },
     quote: {
-        system: "あなたはテキストを学術的な基準に従って適切な引用形式にフォーマットするAIアシスタントです。回答を簡潔にするために、回答文章のみをMarkdown形式で生成してください。",
+        system: "あなたはテキストを学術的な基準に従って適切な引用形式にフォーマットするAIアシスタントです。回答を簡潔にするために、変換後の文章のみをMarkdown形式で生成してください。",
         user: (prompt) => `これを適切な引用形式にフォーマットしてください: ${prompt}`,
     },
     translate: {

@@ -52,11 +52,10 @@ export const TailwindAdvancedEditor = () => {
   const currentLanguage = process.env.NEXT_PUBLIC_AI_LANGUAGE || "en";
 
   const suggestionItems = useMemo(() => {
-    return createSuggestionItemsWithLanguage(currentLanguage, setOpenAI);
-  }, [currentLanguage, setOpenAI]);
+    return createSuggestionItemsWithLanguage(currentLanguage);
+  }, [currentLanguage]);
 
   // スラッシュコマンドをコンポーネント内で初期化
-  // const slashCommand = useSlashCommand(setOpenAI);
   const slashCommand = useMemo(() => {
     return Command.configure({
       suggestion: {
@@ -91,7 +90,7 @@ export const TailwindAdvancedEditor = () => {
 
     // エディタの内容を更新
     if (editorRef.current && currentDoc.content) {
-      console.log("Updating editor content", currentDoc.content);
+      // console.log("Updating editor content", currentDoc.content);
       editorRef.current.commands.clearContent();
       editorRef.current.commands.setContent(currentDoc.content);
     }
@@ -125,12 +124,7 @@ export const TailwindAdvancedEditor = () => {
     setSaveStatus("Saved");
   }, 500);
 
-  const handleCloseMenu = () => {
-    setOpenAI(false);
-    // if (editorRef.current) {
-    //   editorRef.current.commands.clearSelection();
-    // }
-  };
+
 
   if (!initialContent) return null;
 
@@ -257,11 +251,11 @@ export const TailwindAdvancedEditor = () => {
           </EditorCommand>
 
           <GenerativeMenuSwitch
-            open={openAI}
-            onOpenChange={(value) => {
-              // console.log('GenerativeMenuSwitch onOpenChange called with:', value);
-              setOpenAI(value);
-            }}
+          // open={openAI}
+          // onOpenChange={(value) => {
+          //   // console.log('GenerativeMenuSwitch onOpenChange called with:', value);
+          //   setOpenAI(value);
+          // }}
           >
             <Separator orientation="vertical" />
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />

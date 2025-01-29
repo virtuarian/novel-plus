@@ -29,7 +29,7 @@ const AISelectorCommands = ({ onSelect, editor }: AISelectorCommandsProps) => {
   });
 
   return (
-    <>
+    <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
       {/* 選択テキストの編集コマンド - 文章が選択されている場合のみ表示 */}
       {hasSelection && (
         <>
@@ -172,7 +172,7 @@ const AISelectorCommands = ({ onSelect, editor }: AISelectorCommandsProps) => {
           {labels.continueLabel}
         </CommandItem>
       </CommandGroup>
-    </>
+    </div>
   );
 };
 
