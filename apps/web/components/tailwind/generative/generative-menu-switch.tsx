@@ -59,7 +59,7 @@ const GenerativeMenuSwitch = ({ children }: { children: ReactNode }) => {
             size="sm"
           >
             <Magic className="h-5 w-5" />
-            Ask AI
+            AIに依頼
           </Button>
           {children}
         </Fragment>

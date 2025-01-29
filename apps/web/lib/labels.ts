@@ -1,5 +1,20 @@
 // apps/web/lib/labels.ts
-import { RefreshCcwDot, CheckCheck, ArrowDownWideNarrow, WrapText, StepForward } from "lucide-react";
+import { RefreshCcwDot, CheckCheck, ArrowDownWideNarrow, WrapText, StepForward, BookOpen, Briefcase, Code2, Coffee, Scale, Tags, Check, FileText, Globe, Heading, Languages, List, Quote, Sparkles, Target } from "lucide-react";
+
+interface SubMenuItem {
+    value: string;
+    label: string;
+    icon: any;
+    description?: string;  // サブメニューの説明を追加
+}
+
+interface MenuGroup {
+    heading: string;
+    icon: any;            // グループ全体のアイコン
+    color: string;        // グループのテーマカラー
+    items: SubMenuItem[];
+}
+
 interface NodeItem {
     name: string;
     multiple: string; // 'Multiple'の翻訳用
@@ -21,7 +36,20 @@ interface CommandLabels {
     nodeSelector: NodeSelectorLabels;
     editHeading: string;
     moreHeading: string;
+    // menuGroups: MenuGroup[];
     options: {
+        value: string;
+        label: string;
+        icon: any;
+    }[];
+    analysisHeading: string; // 追加
+    styleHeading: string;    // 追加
+    analysisOptions: {       // 追加
+        value: string;
+        label: string;
+        icon: any;
+    }[];
+    styleOptions: {         // 追加
         value: string;
         label: string;
         icon: any;
@@ -32,6 +60,24 @@ interface CommandLabels {
         insertBelow: string;
         discard: string;
     };
+    creativeHeading: string;
+    practicalHeading: string;
+    languageHeading: string;
+    creativeOptions: {
+        value: string;
+        label: string;
+        icon: any;
+    }[];
+    practicalOptions: {
+        value: string;
+        label: string;
+        icon: any;
+    }[];
+    languageOptions: {
+        value: string;
+        label: string;
+        icon: any;
+    }[];
 }
 interface SlashCommandItem {
     title: string;
@@ -83,6 +129,96 @@ export const englishLabels: CommandLabels = {
             label: "Make longer",
             icon: WrapText,
         },
+    ],
+    analysisHeading: "Analyze Text",
+    styleHeading: "Change Style",
+    analysisOptions: [
+        {
+            value: "sentiment",
+            label: "Analyze sentiment",
+            icon: Scale,
+        },
+        {
+            value: "readability",
+            label: "Check readability",
+            icon: BookOpen,
+        },
+        {
+            value: "keywords",
+            label: "Extract keywords",
+            icon: Tags,
+        }
+    ],
+    styleOptions: [
+        {
+            value: "formal",
+            label: "Make formal",
+            icon: Briefcase,
+        },
+        {
+            value: "casual",
+            label: "Make casual",
+            icon: Coffee,
+        },
+        {
+            value: "technical",
+            label: "Make technical",
+            icon: Code2,
+        }
+    ],
+    creativeHeading: "Creative Writing",
+    practicalHeading: "Practical Tools",
+    languageHeading: "Language Tools",
+    creativeOptions: [
+        {
+            value: "alternatives",
+            label: "Suggest alternatives",
+            icon: Sparkles,
+        },
+        {
+            value: "conclusion",
+            label: "Generate conclusion",
+            icon: Target,
+        },
+        {
+            value: "headline",
+            label: "Generate headline",
+            icon: Heading,
+        }
+    ],
+    practicalOptions: [
+        {
+            value: "summarize",
+            label: "Summarize text",
+            icon: FileText,
+        },
+        {
+            value: "bullets",
+            label: "Convert to bullets",
+            icon: List,
+        },
+        {
+            value: "quote",
+            label: "Format quote",
+            icon: Quote,
+        }
+    ],
+    languageOptions: [
+        {
+            value: "translate",
+            label: "Translate text",
+            icon: Languages,
+        },
+        {
+            value: "culturalize",
+            label: "Culturalize expression",
+            icon: Globe,
+        },
+        {
+            value: "international",
+            label: "Check international",
+            icon: Check,
+        }
     ],
     continueLabel: "Continue writing",
     completion: {
@@ -183,6 +319,7 @@ export const englishLabels: CommandLabels = {
 };
 
 export const japaneseLabels: CommandLabels = {
+
     editHeading: "選択部分の編集・校正",
     moreHeading: "AIによる追加機能",
     options: [
@@ -206,6 +343,125 @@ export const japaneseLabels: CommandLabels = {
             label: "文章を長く",
             icon: WrapText,
         },
+    ],
+
+    // menuGroups: [
+    //     {
+    //         heading: "選択部分の編集・校正",
+    //         icon: Edit,
+    //         color: "text-purple-500",
+    //         items: [
+    //     {
+    //         value: "improve",
+    //         label: "文章を改善",
+    //         icon: RefreshCcwDot,
+    //     },
+    //     {
+    //         value: "fix",
+    //         label: "文法を修正",
+    //         icon: CheckCheck,
+    //     },
+    //     {
+    //         value: "shorter",
+    //         label: "文章を短く",
+    //         icon: ArrowDownWideNarrow,
+    //     },
+    //     {
+    //         value: "longer",
+    //         label: "文章を長く",
+    //         icon: WrapText,
+    //     },
+    // ],
+
+    analysisHeading: "文章分析",
+    styleHeading: "スタイル変更",
+    analysisOptions: [
+        {
+            value: "sentiment",
+            label: "感情分析",
+            icon: Scale,
+        },
+        {
+            value: "readability",
+            label: "読みやすさチェック",
+            icon: BookOpen,
+        },
+        {
+            value: "keywords",
+            label: "キーワード抽出",
+            icon: Tags,
+        }
+    ],
+    styleOptions: [
+        {
+            value: "formal",
+            label: "フォーマル文体に変換",
+            icon: Briefcase,
+        },
+        {
+            value: "casual",
+            label: "カジュアル文体に変換",
+            icon: Coffee,
+        },
+        {
+            value: "technical",
+            label: "専門的文体に変換",
+            icon: Code2,
+        }
+    ],
+    creativeHeading: "創作支援",
+    practicalHeading: "実用ツール",
+    languageHeading: "言語ツール",
+    creativeOptions: [
+        {
+            value: "alternatives",
+            label: "類似表現を提案",
+            icon: Sparkles,
+        },
+        {
+            value: "conclusion",
+            label: "結論を生成",
+            icon: Target,
+        },
+        {
+            value: "headline",
+            label: "見出しを生成",
+            icon: Heading,
+        }
+    ],
+    practicalOptions: [
+        {
+            value: "summarize",
+            label: "要約を作成",
+            icon: FileText,
+        },
+        {
+            value: "bullets",
+            label: "箇条書きに変換",
+            icon: List,
+        },
+        {
+            value: "quote",
+            label: "引用を整形",
+            icon: Quote,
+        }
+    ],
+    languageOptions: [
+        {
+            value: "translate",
+            label: "翻訳",
+            icon: Languages,
+        },
+        {
+            value: "culturalize",
+            label: "文化的表現に変換",
+            icon: Globe,
+        },
+        {
+            value: "international",
+            label: "国際表現をチェック",
+            icon: Check,
+        }
     ],
     continueLabel: "文章を続ける",
     completion: {

@@ -1,3 +1,4 @@
+// apps/web/app/api/generate/route.ts
 import {
   callAzureOpenAIStream,
   callDeepSeek,
@@ -74,6 +75,164 @@ export async function POST(req: Request): Promise<Response> {
         {
           role: "user",
           content: prompts.zap.user(prompt, command || ''),
+        },
+      ])
+      // 文章分析オプション
+      .with("sentiment", () => [
+        {
+          role: "system",
+          content: prompts.sentiment.system,
+        },
+        {
+          role: "user",
+          content: prompts.sentiment.user(prompt),
+        },
+      ])
+      .with("readability", () => [
+        {
+          role: "system",
+          content: prompts.readability.system,
+        },
+        {
+          role: "user",
+          content: prompts.readability.user(prompt),
+        },
+      ])
+      .with("keywords", () => [
+        {
+          role: "system",
+          content: prompts.keywords.system,
+        },
+        {
+          role: "user",
+          content: prompts.keywords.user(prompt),
+        },
+      ])
+
+      // スタイル変更オプション
+      .with("formal", () => [
+        {
+          role: "system",
+          content: prompts.formal.system,
+        },
+        {
+          role: "user",
+          content: prompts.formal.user(prompt),
+        },
+      ])
+      .with("casual", () => [
+        {
+          role: "system",
+          content: prompts.casual.system,
+        },
+        {
+          role: "user",
+          content: prompts.casual.user(prompt),
+        },
+      ])
+      .with("technical", () => [
+        {
+          role: "system",
+          content: prompts.technical.system,
+        },
+        {
+          role: "user",
+          content: prompts.technical.user(prompt),
+        },
+      ])
+      // 創作支援オプション
+      .with("alternatives", () => [
+        {
+          role: "system",
+          content: prompts.alternatives.system,
+        },
+        {
+          role: "user",
+          content: prompts.alternatives.user(prompt),
+        },
+      ])
+      .with("conclusion", () => [
+        {
+          role: "system",
+          content: prompts.conclusion.system,
+        },
+        {
+          role: "user",
+          content: prompts.conclusion.user(prompt),
+        },
+      ])
+      .with("headline", () => [
+        {
+          role: "system",
+          content: prompts.headline.system,
+        },
+        {
+          role: "user",
+          content: prompts.headline.user(prompt),
+        },
+      ])
+
+      // 実用ツールオプション
+      .with("summarize", () => [
+        {
+          role: "system",
+          content: prompts.summarize.system,
+        },
+        {
+          role: "user",
+          content: prompts.summarize.user(prompt),
+        },
+      ])
+      .with("bullets", () => [
+        {
+          role: "system",
+          content: prompts.bullets.system,
+        },
+        {
+          role: "user",
+          content: prompts.bullets.user(prompt),
+        },
+      ])
+      .with("quote", () => [
+        {
+          role: "system",
+          content: prompts.quote.system,
+        },
+        {
+          role: "user",
+          content: prompts.quote.user(prompt),
+        },
+      ])
+
+      // 言語ツールオプション
+      .with("translate", () => [
+        {
+          role: "system",
+          content: prompts.translate.system,
+        },
+        {
+          role: "user",
+          content: prompts.translate.user(prompt),
+        },
+      ])
+      .with("culturalize", () => [
+        {
+          role: "system",
+          content: prompts.culturalize.system,
+        },
+        {
+          role: "user",
+          content: prompts.culturalize.user(prompt),
+        },
+      ])
+      .with("international", () => [
+        {
+          role: "system",
+          content: prompts.international.system,
+        },
+        {
+          role: "user",
+          content: prompts.international.user(prompt),
         },
       ])
       .run();

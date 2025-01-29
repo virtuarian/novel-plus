@@ -90,6 +90,11 @@ export function AIMenu({ open, onOpenChange, editor, triggerRef, position = "but
         ? "fixed bottom-20 right-6" // 固定ボタンの場合、画面右下に表示
         : "relative"; // 選択時は EditorBubble 内で相対配置
 
+
+    const placeholderText = process.env.NEXT_PUBLIC_AI_LANGUAGE === 'ja'
+        ? (hasCompletion ? "AIに次の操作を指示する" : "AIに編集や生成を依頼する...")
+        : (hasCompletion ? "Tell AI what to do next" : "Ask AI to edit or generate...");
+
     return (
         <div className={`${positionStyles} z-50`}>
             <Command ref={menuRef} className="w-[350px] bg-background shadow-lg rounded-lg border">
@@ -120,7 +125,7 @@ export function AIMenu({ open, onOpenChange, editor, triggerRef, position = "but
                                 onValueChange={setInputValue}
                                 onKeyDown={handleKeyDown} // エンターキーハンドラーを追加
                                 autoFocus
-                                placeholder={hasCompletion ? "Tell AI what to do next" : "Ask AI to edit or generate..."}
+                                placeholder={placeholderText}
                             />
                             <Button
                                 size="icon"
