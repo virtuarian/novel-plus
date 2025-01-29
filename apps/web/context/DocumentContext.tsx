@@ -4,6 +4,7 @@ import { defaultEditorContent } from '@/lib/content';
 import type { JSONContent } from 'novel';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 export interface NotionDocument {
     id: string;          // ユニークID
     title: string;       // ドキュメントタイトル
@@ -31,7 +32,7 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
     const [currentDoc, setCurrentDoc] = useState<NotionDocument | null>(() => {
         // 初期状態で新規ドキュメントを作成
         return {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             title: '',
             content: defaultEditorContent,
             updatedAt: Date.now()

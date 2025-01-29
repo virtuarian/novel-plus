@@ -6,6 +6,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Plus } from 'lucide-react';
 import { Trash } from 'lucide-react';
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export const DocumentList = () => {
     const { documents, setCurrentDoc, setDocuments } = useDocuments();
@@ -22,7 +23,7 @@ export const DocumentList = () => {
     // ドキュメントの新規作成
     const handleNewDocument = () => {
         const newDoc = {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             title: '',
             content: defaultEditorContent, // defaultEditorContentをインポートする必要があります
             updatedAt: Date.now()

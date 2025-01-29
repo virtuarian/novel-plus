@@ -20,6 +20,7 @@ import {
 } from "novel";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { v4 as uuidv4 } from 'uuid';
 import { defaultExtensions } from "./extensions";
 import { AIMenu } from "./generative/ai-menu";
 import GenerativeMenuSwitch from "./generative/generative-menu-switch";
@@ -32,7 +33,6 @@ import { TextButtons } from "./selectors/text-buttons";
 import { createSuggestionItemsWithLanguage } from "./slash-command";
 import Magic from "./ui/icons/magic";
 import { Separator } from "./ui/separator";
-
 const hljs = require("highlight.js");
 
 export const TailwindAdvancedEditor = () => {
@@ -113,7 +113,7 @@ export const TailwindAdvancedEditor = () => {
   const debouncedUpdates = useDebouncedCallback((editor: EditorInstance) => {
     const json = editor.getJSON();
     const updatedDoc = {
-      id: currentDoc?.id || crypto.randomUUID(),
+      id: currentDoc?.id || uuidv4(),
       title,
       content: json,
       updatedAt: Date.now(),
