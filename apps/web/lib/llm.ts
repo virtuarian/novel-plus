@@ -1,6 +1,9 @@
 // apps/web/lib/llm.ts
+import { EnvHttpProxyAgent, setGlobalDispatcher } from "undici";
+
 interface LLMRequestParams {
   model: string;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   message: any;
   apiKey: string | undefined;
   endpoint: string | undefined;
@@ -40,6 +43,7 @@ const processStream = async (
 
       for (const line of lines) {
         const trimmedLine = line.trim();
+        // biome-ignore lint/complexity/useOptionalChain: <explanation>
         if (!trimmedLine || (config.shouldSkip && config.shouldSkip(trimmedLine))) {
           continue;
         }
@@ -83,48 +87,60 @@ export const createStreamResponse = (
 
 // OpenAIのストリーミング処理
 export const callOpenAIStream = async (params: LLMRequestParams) => {
-  const response = await fetch(`${params.endpoint}/openai/deployments/${params.model}/chat/completions?api-version=2024-02-15-preview`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'api-key': params.apiKey,
-    },
-    body: JSON.stringify({
-      model: params.model,
-      messages: [{ role: 'user', content: params.message }],
-      temperature: params.temperature,
-      stream: true,
-    }),
-  });
 
-  if (!response.ok) {
-    throw new LLMError('OpenAI request failed', 'openai', response.status);
-  }
-
-  return createStreamResponse(
-    response.body.getReader(),
-    {
-      parseResponse: (line) => {
-        if (!line.startsWith('data: ')) return null;
-        const content = line.slice(6);
-        if (content === '[DONE]') return null;
-
-        try {
-          const data = JSON.parse(content);
-          return data.choices?.[0]?.delta?.content || null;
-        } catch (e) {
-          console.error('Error parsing OpenAI response:', e);
-          return null;
-        }
-      },
-      shouldSkip: (line) => {
-        // [DONE]メッセージやfinish_reasonを含む行をスキップ
-        return line === 'data: [DONE]' ||
-          line.includes('"finish_reason":"stop"') ||
-          line.includes('"finish_reason":"length"');
-      }
+  try {
+    // プロキシ設定
+    if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY) {
+      setGlobalDispatcher(new EnvHttpProxyAgent());
     }
-  );
+
+    const response = await fetch(`${params.endpoint}/openai/deployments/${params.model}/chat/completions?api-version=2024-02-15-preview`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': params.apiKey,
+      },
+      body: JSON.stringify({
+        model: params.model,
+        messages: [{ role: 'user', content: params.message }],
+        temperature: params.temperature,
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new LLMError('OpenAI request failed', 'openai', response.status);
+    }
+
+    return createStreamResponse(
+      response.body.getReader(),
+      {
+        parseResponse: (line) => {
+          if (!line.startsWith('data: ')) return null;
+          const content = line.slice(6);
+          if (content === '[DONE]') return null;
+
+          try {
+            const data = JSON.parse(content);
+            return data.choices?.[0]?.delta?.content || null;
+          } catch (e) {
+            console.error('Error parsing OpenAI response:', e);
+            return null;
+          }
+        },
+        shouldSkip: (line) => {
+          // [DONE]メッセージやfinish_reasonを含む行をスキップ
+          return line === 'data: [DONE]' ||
+            line.includes('"finish_reason":"stop"') ||
+            line.includes('"finish_reason":"length"');
+        }
+      }
+    );
+  }
+  catch (error) {
+    console.error('Error calling OpenAI:', error);
+    throw new LLMError('OpenAI request failed', 'openai');
+  }
 };
 
 // Azure OpenAIのストリーミング処理

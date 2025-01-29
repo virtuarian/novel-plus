@@ -9,7 +9,7 @@ import { getPrompts } from "@/lib/prompts";
 // apps/web/app/api/generate/route.ts
 import { match } from "ts-pattern";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 export async function POST(req: Request): Promise<Response> {
   try {

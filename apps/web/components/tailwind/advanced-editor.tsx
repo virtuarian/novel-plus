@@ -119,6 +119,9 @@ export const TailwindAdvancedEditor = () => {
       updatedAt: Date.now(),
     };
 
+    //タイトルが無いときは保存しない
+    if (title.trim() === "") return;
+
     saveDocument(updatedDoc);
     setCharsCount(editor.storage.characterCount.words());
     setSaveStatus("Saved");
@@ -144,7 +147,7 @@ export const TailwindAdvancedEditor = () => {
             }
           }}
           className="w-full text-xl font-bold p-2 border-none bg-background focus:outline-none focus:ring-2 focus:ring-accent rounded-md"
-          placeholder="ドキュメントタイトル"
+          placeholder="ドキュメントのタイトルを入力してください"
         />
       </div>
 
