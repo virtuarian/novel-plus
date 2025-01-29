@@ -1,12 +1,12 @@
-// apps/web/app/api/generate/route.ts
-import { match } from "ts-pattern";
 import {
+  callAzureOpenAIStream,
   callDeepSeek,
   callGeminiStream,
   callOpenAIStream,
-  callAzureOpenAIStream,
 } from "@/lib/llm";
 import { getPrompts } from "@/lib/prompts";
+// apps/web/app/api/generate/route.ts
+import { match } from "ts-pattern";
 
 export const runtime = "edge";
 
@@ -92,8 +92,8 @@ export async function POST(req: Request): Promise<Response> {
           return await callOpenAIStream({
             ...commonParams,
             apiKey: process.env.OPENAI_API_KEY,
-            model: process.env.OPENAI_MODEL || "gpt-4",
-            endpoint: undefined,
+            model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+            endpoint: process.env.OPENAI_ENDPOINT,
           });
 
         case "azure":

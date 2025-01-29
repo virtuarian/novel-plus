@@ -11,7 +11,7 @@ export function SlashCommandAISelector({ editor, onClose }: SlashCommandAISelect
     return (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999]">
             <div className="bg-background rounded-lg shadow-lg border border-muted">
-                <AISelector
+                {/* <AISelector
                     open={true}
                     onOpenChange={(open) => {
                         if (!open) {
@@ -20,7 +20,7 @@ export function SlashCommandAISelector({ editor, onClose }: SlashCommandAISelect
                         }
                     }}
 
-                />
+                /> */}
             </div>
         </div>
     );

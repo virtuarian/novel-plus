@@ -1,11 +1,10 @@
 // components/DocumentList.tsx
 'use client';
+import { type NotionDocument, useDocuments } from '@/context/DocumentContext';
+import { defaultEditorContent } from '@/lib/content';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Plus } from 'lucide-react';
-import { useDocuments } from '@/context/DocumentContext';
-import type { NotionDocument } from './documents';
 import { Trash } from 'lucide-react';
-import { defaultEditorContent } from '@/lib/content';
 import { useState } from 'react';
 
 export const DocumentList = () => {

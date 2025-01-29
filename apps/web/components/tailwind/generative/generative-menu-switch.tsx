@@ -1,43 +1,61 @@
 // apps/web/components/tailwind/generative/generative-menu-switch.tsx
 import { EditorBubble, removeAIHighlight, useEditor } from "novel";
-import { Fragment, type ReactNode, useEffect } from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import Magic from "../ui/icons/magic";
-import { AISelector } from "./ai-selector";
+import { AIMenu } from "./ai-menu";
 
-interface GenerativeMenuSwitchProps {
-  children: ReactNode;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSwitchProps) => {
+const GenerativeMenuSwitch = ({ children }: { children: ReactNode }) => {
   const { editor } = useEditor();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!open) removeAIHighlight(editor);
-  }, [open]);
+    if (!open && editor) {
+      removeAIHighlight(editor);
+    }
+  }, [open, editor]);
+
+  // テキスト選択状態の監視
+  useEffect(() => {
+    if (editor) {
+      const updateHandler = () => {
+        const hasSelection = !editor.state.selection.empty;
+        if (!hasSelection && open) {
+          setOpen(false);
+        }
+      };
+
+      editor.on("selectionUpdate", updateHandler);
+      return () => {
+        editor.off("selectionUpdate", updateHandler);
+      };
+    }
+  }, [editor, open]);
+
+  if (!editor) {
+    return null;
+  }
 
   return (
     <EditorBubble
       tippyOptions={{
         placement: open ? "bottom-start" : "top",
-        // appendTo: () => document.body,  // bodyに直接追加
         onHidden: () => {
-          onOpenChange(false);
-          editor.chain().unsetHighlight().run();
+          setOpen(false);
+          editor.commands.unsetHighlight();
         },
-
       }}
       className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
     >
-      {open && <AISelector open={open} onOpenChange={onOpenChange} />}
-      {!open && (
+      {open ? (
+        <AIMenu open={open} onOpenChange={setOpen} editor={editor} position="selection" />
+      ) : (
         <Fragment>
           <Button
             data-ask-ai-button
             className="gap-1 rounded-none text-purple-500"
             variant="ghost"
-            onClick={() => onOpenChange(true)}
+            onClick={() => setOpen(true)}
             size="sm"
           >
             <Magic className="h-5 w-5" />

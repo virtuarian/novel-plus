@@ -83,11 +83,11 @@ export const createStreamResponse = (
 
 // OpenAIのストリーミング処理
 export const callOpenAIStream = async (params: LLMRequestParams) => {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch(`${params.endpoint}/openai/deployments/${params.model}/chat/completions?api-version=2024-02-15-preview`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${params.apiKey}`,
+      'api-key': params.apiKey,
     },
     body: JSON.stringify({
       model: params.model,
@@ -102,17 +102,26 @@ export const callOpenAIStream = async (params: LLMRequestParams) => {
   }
 
   return createStreamResponse(
-    response.body!.getReader(),
+    response.body.getReader(),
     {
       parseResponse: (line) => {
         if (!line.startsWith('data: ')) return null;
+        const content = line.slice(6);
+        if (content === '[DONE]') return null;
+
         try {
-          const data = JSON.parse(line.slice(6));
+          const data = JSON.parse(content);
           return data.choices?.[0]?.delta?.content || null;
         } catch (e) {
           console.error('Error parsing OpenAI response:', e);
           return null;
         }
+      },
+      shouldSkip: (line) => {
+        // [DONE]メッセージやfinish_reasonを含む行をスキップ
+        return line === 'data: [DONE]' ||
+          line.includes('"finish_reason":"stop"') ||
+          line.includes('"finish_reason":"length"');
       }
     }
   );
@@ -124,7 +133,7 @@ export const callAzureOpenAIStream = async (params: LLMRequestParams) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'api-key': params.apiKey!,
+      'api-key': params.apiKey,
     },
     body: JSON.stringify({
       messages: [{ role: 'user', content: params.message }],
@@ -139,17 +148,25 @@ export const callAzureOpenAIStream = async (params: LLMRequestParams) => {
   }
 
   return createStreamResponse(
-    response.body!.getReader(),
+    response.body.getReader(),
     {
       parseResponse: (line) => {
         if (!line.startsWith('data: ')) return null;
+        const content = line.slice(6);
+        if (content === '[DONE]') return null;
+
         try {
-          const data = JSON.parse(line.slice(6));
+          const data = JSON.parse(content);
           return data.choices?.[0]?.delta?.content || null;
         } catch (e) {
           console.error('Error parsing Azure OpenAI response:', e);
           return null;
         }
+      },
+      shouldSkip: (line) => {
+        return line === 'data: [DONE]' ||
+          line.includes('"finish_reason":"stop"') ||
+          line.includes('"finish_reason":"length"');
       }
     }
   );
@@ -175,7 +192,7 @@ export const callGeminiStream = async (params: LLMRequestParams) => {
   }
 
   return createStreamResponse(
-    response.body!.getReader(),
+    response.body.getReader(),
     {
       parseResponse: (chunk) => {
         try {
@@ -210,7 +227,7 @@ export const callDeepSeek = async (params: LLMRequestParams) => {
   }
 
   return createStreamResponse(
-    response.body!.getReader(),
+    response.body.getReader(),
     {
       parseResponse: (line) => {
         if (!line.startsWith('data: ')) return null;

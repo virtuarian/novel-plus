@@ -4,7 +4,7 @@ import { defaultEditorContent } from '@/lib/content';
 import type { JSONContent } from 'novel';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-interface NotionDocument {
+export interface NotionDocument {
     id: string;          // ユニークID
     title: string;       // ドキュメントタイトル
     content: JSONContent; // エディタの内容

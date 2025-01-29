@@ -5,7 +5,7 @@ export const defaultEditorContent = {
       type: "paragraph",
       content: [
         {
-          text: "",
+          text: " ",
           type: 'text'
         },
       ],
