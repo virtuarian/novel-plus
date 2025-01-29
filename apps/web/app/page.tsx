@@ -14,9 +14,22 @@ export default function Page() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch("/api/user")
-      .then((res) => res.json())
-      .then((data) => setUser(data.user));
+
+    if (process.env.NEXT_PUBLIC_LOGIN_CHECK === "true") {
+      fetch("/api/user")
+        .then((res) => res.json())
+        .then((data) => setUser(data.user));
+    }
+    else {
+      setUser({
+        userId: "guest",
+        userName: "Guest",
+        authority: false,
+        enable: true,
+        firstLogin: false,
+        passwordChange: false,
+      });
+    }
   }, []);
 
   if (!user) return <LoginDialog />;
